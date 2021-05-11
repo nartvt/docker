@@ -1,0 +1,98 @@
+version: '3.1'
+
+services: 
+    portainer:
+        image: 'portainer/portainer:latest'
+        container_name: portainer
+        ports:
+            - 9000:9000
+            - 8000:8000
+        restart: always
+        volumes: 
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./portainer_data:/data
+        # user: root
+
+    mysql:
+        image: 'mysql:8.0'
+        container_name: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        ports: 
+            - "3306:3306"
+        restart: always
+        volumes: 
+            - ./mysql/data:/var/lib/mysql
+        environment: 
+            MYSQL_ROOT_PASSWORD: root
+        user: root
+    
+    mariadb:
+        image: mariadb
+        restart: always
+        ports: 
+            - "3308:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: mariaroot
+        volumes: 
+            - ./mariadb/data:/var/lib/mysql
+        user: root
+
+    # ubuntu18:
+    #     image: 'taivantran/ubuntu18.04.1_openjdk:latest'
+    #     container_name: ubuntu-18
+    #     # restart: always
+    #     volumes: 
+    #         - ./angular:/angular
+    #     user: root
+    
+    # mongoDB: 
+    #   image: "mongo:latest"
+    #   container_name: "mongo-container"
+    #   environment: 
+    #     # - MONGO_INITDB_DATABASE=mongo-database-name
+    #     - MONGO_INITDB_ROOT_USERNAME=root
+    #     - MONGO_INITDB_ROOT_PASSWORD=root
+    #   volumes: 
+    #     # - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    #     - ./mongo-volume:/data/db
+    #   ports: 
+    #     - '27017:27017'
+    # postgres:
+    #     image: postgres:12
+    #     restart: always
+    #     volumes: 
+    #         - ./postgresql/data:/var/lib/postgresql/data
+    #     environment:
+    #         - POSTGRES_USER=postgres
+    #         - POSTGRES_PASSWORD=root
+    #         - POSTGRES_DB=sampledb
+    #         - POSTGRES_INITDB_ARGS="--encoding=UTF-8"
+    #     ports: 
+    #         - 5432:5432
+    #     user: root
+    # pgAdmin:
+    #     image: "dpage/pgadmin4:latest"
+    #     restart: always
+    #     environment: 
+    #         - PGADMIN_DEFAULT_EMAIL=root
+    #         - PGADMIN_DEFAULT_PASSWORD=root
+    #     ports: 
+    #         - 8080:80
+    #     volumes: 
+    #         - ./pgadmin/pgadmin_data:/var/lib/pgadmin
+    #     user: root
+    
+    # oracle-database:
+    #     image: store/oracle/database-enterprise:12.2.0.1
+    #     container_name: "oracle-container"
+    #     environment:
+    #         - ORACLE_SID=xe
+    #         - ORACLE_PDB=test
+    #     volumes:
+    #         - ./oracle/oradata:/opt/oracle/oradata # persistent oracle database data.
+    #         - ./data-bridge:/data-bridge # just to have someplace to put data into the running container if needed
+    #     ports:
+    #         - 1522:1521
+    #         - 8081:8080
+    #         - 5501:5500
+    #     user: root
