@@ -1,24 +1,14 @@
 version: '3.1'
 
 services:
-    redis:
-        image: "redis:alpine"
-        command: redis-server --requirepass p4ssw0rd
-        restart: always # unless-stopped
-        ports:
-            - "6379:6379"
-        volumes:
-            - ./redis-data:/var/lib/redis
-            - ./redis.conf:/usr/local/etc/redis/redis.conf
-        environment:
-            - REDIS_REPLICATION_MODE=master
+
     app:
         build:
             args:
                 user: sammy
                 uid: 1000
             context: ./
-            dockerfile: ./dockerfiles/laravel/Dockerfile
+            dockerfile: /home/nartvt/freelancer/justrace/docker/dockerfiles/laravel/Dockerfile
         image: justrace.vn_php-cli
         # image: 'docker.therunninghub.net_php-cli:latest'
         container_name: php_host_cli
@@ -31,21 +21,21 @@ services:
         networks:
             - trh-mariadb-dev-01
         user: root
-
-    portainer:
-        image: 'portainer/portainer:latest'
-        container_name: portainer
+    
+    redis:
+        image: "redis:alpine"
+        command: redis-server --requirepass p4ssw0rd
+        restart: always # unless-stopped
         ports:
-            - 9001:9000
-            - 8000:8000
-        restart: always
-        volumes: 
-            - /var/run/docker.sock:/var/run/docker.sock
-            - ./portainer_data:/data
-        # user: root
+            - "6379:6379"
+        volumes:
+            - ./redis-data:/var/lib/redis
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+        environment:
+            - REDIS_REPLICATION_MODE=master
         networks:
             - trh-mariadb-dev-01
-    
+
     mariadb:
         image: "mariadb:latest"
         container_name: mariadb_host
@@ -64,9 +54,9 @@ services:
             # - ./mariadb/conf/:/etc/mysql/
             - ./docker-compose/mariadb:/docker-entrypoint-initdb.d
         user: root
-        networks: 
+        networks:
             - trh-mariadb-dev-01
-
+        
     rabbitmq:
         image: rabbitmq:3-management-alpine
         container_name: 'rabbitmq'
@@ -81,48 +71,10 @@ services:
         volumes:
             - /rabitmq-data/data/:/var/lib/rabbitmq/
             - /rabitmq-data/log/:/var/log/rabbitmq/
-        networks:
-            - rabbitmq_go_net
-        user: root
-
-    nginx:
-        image: nginx:1.17-alpine
-        container_name: nginx_host
-        restart: always # unless-stopped
-        ports:
-            - 8800:80
-        volumes:
-            - ./:/var/www
-            - ./docker-compose/nginx:/etc/nginx/conf.d
         user: root
         networks:
             - trh-mariadb-dev-01
-    cassandra:
-        image: bitnami/cassandra
-        container_name: cassandra-binami
-        ports: 
-            - 9042:9042
-            - 7000:7000
-            - 7199:7199
-        environment:
-            - CASSANDRA_USER=admin
-            - CASSANDRA_PASSWORD=123456
-            - CASSANDRA_TRANSPORT_PORT_NUMBER=7000
-    # postgres:
-    #     image: postgres:12
-    #     restart: always
-    #     volumes: 
-    #         - ./postgresql/data:/var/lib/postgresql/data
-    #     environment:
-    #         - POSTGRES_USER=postgres
-    #         - POSTGRES_PASSWORD=root
-    #         - POSTGRES_DB=sampledb
-    #         - POSTGRES_INITDB_ARGS="--encoding=UTF-8"
-    #     ports: 
-    #         - 5432:5432
-    #     user: root
 
-# create network name
 networks:
     rabbitmq_go_net:
         driver: bridge

@@ -1,0 +1,54 @@
+version: '3.1'
+
+services:
+    redis:
+        image: "redis:alpine"
+        command: redis-server --requirepass p4ssw0rd
+        # restart: always # unless-stopped
+        ports:
+            - "6379:6379"
+        volumes:
+            - ./redis-data:/var/lib/redis
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+        environment:
+            - REDIS_REPLICATION_MODE=master
+
+    cassandra:
+        image: bitnami/cassandra
+        container_name: cassandra-binami
+        ports: 
+            - 9042:9042
+            - 7000:7000
+            - 7199:7199
+        environment:
+            - CASSANDRA_USER=admin
+            - CASSANDRA_PASSWORD=123456
+            - CASSANDRA_TRANSPORT_PORT_NUMBER=7000
+    
+    mariadb:
+        image: "mariadb:latest"
+        container_name: mariadb_host
+        # restart: always
+        ports: 
+            - "${DB_PORT}:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: root
+        volumes: 
+            - ./mariadb/data:/var/lib/mysql
+            - ./maria-conf:/app/conf
+            # - ./mariadb/conf/:/etc/mysql/
+            - ./docker-compose/mariadb:/docker-entrypoint-initdb.d
+        user: root
+        networks: 
+            - trh-mariadb-dev-01
+
+# create network name
+networks:
+    rabbitmq_go_net:
+        driver: bridge
+    trh-mariadb-dev-01:
+        driver: bridge

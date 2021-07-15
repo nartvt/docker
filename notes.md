@@ -19,9 +19,6 @@
     
  access to docker container execute, database/app:  composer install
 
-composer install
-php artisan migrate --seed
-php artisan migrate
 
 rabbitmqctl add_user justrace p4ssw0rd
 rabbitmqctl set_user_tags justrace administrator

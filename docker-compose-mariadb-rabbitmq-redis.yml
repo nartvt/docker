@@ -1,0 +1,49 @@
+version: '3.1'
+
+services:
+    redis:
+        image: "redis:alpine"
+        command: redis-server --requirepass p4ssw0rd
+        restart: always # unless-stopped
+        ports:
+            - "6379:6379"
+        volumes:
+            - ./redis-data:/var/lib/redis
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+        environment:
+            - REDIS_REPLICATION_MODE=master
+
+    mariadb:
+        image: "mariadb:latest"
+        container_name: mariadb_host
+        restart: always
+        ports: 
+            - "${DB_PORT}:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: root
+        volumes: 
+            - ./mariadb/data:/var/lib/mysql
+            - ./maria-conf:/app/conf
+            # - ./mariadb/conf/:/etc/mysql/
+            - ./docker-compose/mariadb:/docker-entrypoint-initdb.d
+        user: root
+        
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: 'rabbitmq'
+        restart: always
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment: 
+            - RABBITMQ_USERNAME=justrace
+            - RABBITMQ_PASSWORD=p4ssw0rd
+            - RABBITMQ_DEFAULT_VHOST=jr_vhost
+        volumes:
+            - /rabitmq-data/data/:/var/lib/rabbitmq/
+            - /rabitmq-data/log/:/var/log/rabbitmq/
+        user: root
