@@ -4,7 +4,7 @@ status=$1
 
 echo "$status justrace docker compose"
 
-docker_compose=docker-compose-justrace.yml
+docker_compose=docker-compose-freelancer.yml
 
 if [ "$status" = "start" ]; then
     # sudo docker-compose -f $docker_compose --env-file=./environment/.env pull

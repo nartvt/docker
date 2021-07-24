@@ -4,7 +4,7 @@ services:
     redis:
         image: "redis:alpine"
         command: redis-server --requirepass p4ssw0rd
-        restart: always # unless-stopped
+        # restart: always # unless-stopped
         ports:
             - "6379:6379"
         volumes:
@@ -22,7 +22,7 @@ services:
         image: justrace.vn_php-cli
         # image: 'docker.therunninghub.net_php-cli:latest'
         container_name: php_host_cli
-        restart: always # unless-stopped
+        # restart: always # unless-stopped 
         working_dir: /var/www/
         volumes:
             - ./:/var/www
@@ -49,7 +49,7 @@ services:
     mariadb:
         image: "mariadb:latest"
         container_name: mariadb_host
-        restart: always
+        # restart: always 
         ports: 
             - "${DB_PORT}:3306"
         environment:
@@ -70,7 +70,7 @@ services:
     rabbitmq:
         image: rabbitmq:3-management-alpine
         container_name: 'rabbitmq'
-        restart: always
+        # restart: always 
         ports:
             - 5672:5672
             - 15672:15672
@@ -88,7 +88,7 @@ services:
     nginx:
         image: nginx:1.17-alpine
         container_name: nginx_host
-        restart: always # unless-stopped
+        # restart: always # unless-stopped 
         ports:
             - 8800:80
         volumes:
