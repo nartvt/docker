@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+    mariadb:
+        image: "mariadb:latest"
+        container_name: ${DB_HOST}
+        # restart: always
+        ports: 
+            - "${DB_PORT}:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            # MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: root
+        volumes: 
+            - ./mariadb/data:/var/lib/mysql
+            - ./maria-conf:/app/conf
+            # - ./mariadb/conf/:/etc/mysql/
+            - ./docker-compose/mariadb:/docker-entrypoint-initdb.d
+        user: root
+        networks: 
+            - foody-mariadb-dev-01
+
+# create network name
+networks:
+    foody-mariadb-dev-01:
+        driver: bridge

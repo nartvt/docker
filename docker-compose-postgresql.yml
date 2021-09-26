@@ -1,0 +1,43 @@
+version: '3.1'
+
+services:
+    postgres:
+        image: postgres:12
+        restart: always
+        volumes: 
+            - ./postgresql/data:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=sampledb
+            - POSTGRES_INITDB_ARGS="--encoding=UTF-8"
+        ports: 
+            - 5432:5432
+        user: root
+        networks: 
+            - golang-postgresql-dev-01
+
+    mariadb:
+        image: "mariadb:latest"
+        container_name: mariadb_host
+        restart: always
+        ports: 
+            - "${DB_PORT}:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: root
+        volumes: 
+            - ./mariadb/data:/var/lib/mysql
+            - ./maria-conf:/app/conf
+            # - ./mariadb/conf/:/etc/mysql/
+            - ./docker-compose/mariadb:/docker-entrypoint-initdb.d
+        user: root
+        networks: 
+            - golang-postgresql-dev-01
+# create network name
+networks:
+    golang-postgresql-dev-01:
+        driver: bridge

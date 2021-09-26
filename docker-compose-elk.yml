@@ -1,0 +1,47 @@
+version: "3.1"
+
+services:
+  elasticsearch:
+    image: "elasticsearch:7.14.1"
+    container_name: "elasticsearch_container"
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    volumes:
+      - ./elasticsearch:/etc/elasticsearch
+    environment:
+      - discovery.type=single-node
+    networks:
+      - local_network
+
+  kibana:
+    image: kibana:7.14.1
+    container_name: "kibana_container"
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    volumes:
+      - ./kibana:/etc/kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch_container:9200
+    networks:
+      - local_network
+
+  portainer:
+      image: 'portainer/portainer:latest'
+      container_name: portainer
+      ports:
+          - 9001:9000
+          - 8000:8000
+      restart: always
+      volumes: 
+          - /var/run/docker.sock:/var/run/docker.sock
+          - ./portainer_data:/data
+      # user: root
+      networks:
+          - local_network
+
+networks:
+  local_network:
+    driver: bridge
